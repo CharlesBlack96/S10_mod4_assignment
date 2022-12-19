@@ -1,4 +1,8 @@
-'''All of my queries that directly answer the questions from the prompt'''
+'''All of my queries that directly answer the questions from the prompt. 
+At the end of the day i do beleive noSQL if far more
+diverse and applicable and complicated. SQL if
+comfortable but i believe noSQL can be more diverse
+hance more useful.'''
 
 #query 0
 TOTAL_SURVIVED = '''
@@ -124,12 +128,63 @@ class MongoAnswers():
     def __init__(self, col):
         #get all documents
         self.col = col
-        self.characters = col.find({})
+        self.characters = list(col.find({}))
 
     def total_characters(self):
-        return len(list(self.characters))
+        return len(self.characters)
+    
+    def total_items(self):
+        count = 0
+        for character in self.characters:
+            count += len(character['items'])
+        return count
+
+    def total_weapons(self):
+        count = 0
+        for character in self.characters:
+            count += len(character['weapons'])
+        return count
+
+    def total_non_weapons(self):
+        return self.total_items() - self.total_weapons()
+
+    def character_weapons(self):
+        weapons_list = []
+        for character in self.characters[:20]:
+            num_weapons = len(character['weapons'])
+            weapons_list.append((character['name'], num_weapons))
+        return weapons_list
+
+    def character_items(self):
+        items_list = []
+        for character in self.characters[:20]:
+            num_items = len(character['items'])
+            items_list.append((character['name'], num_items))
+        return items_list
+
+    def average_items(self):
+        num_items = []
+        for character in self.characters:
+            num_items.append(len(character['items']))
+        return (sum(num_items) / len(num_items))
+
+    def average_weapons(self):
+        num_weapons = []
+        for character in self.characters:
+            num_weapons.append(len(character['weapons']))
+        return (sum(num_weapons) / len(num_weapons))
+
 
     def show_results(self):
         return(f'''
         Total Number of Characters: {self.total_characters()}
+        Total Number of Items: {self.total_items()}
+        Total Number of Weapons: {self.total_weapons()}
+        Total Number of non-Weapons: {self.total_non_weapons()}
+        Number of Weapons per Character (first 20): {self.character_weapons()}
+        Number of items per Character (first 20): {self.character_items()}
+        Average number of items per character: {self.average_items()}
+        Average number of weapons per character: {self.average_weapons()}
         ''')
+
+
